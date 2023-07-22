@@ -1,0 +1,5 @@
+#import user/user.graphql
+#import post/post.graphql
+#import comment/comment.graphql
+#import categories/categories.graphql
+#import auth/auth.graphql

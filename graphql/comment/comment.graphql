@@ -1,0 +1,49 @@
+# GraphQL Query
+extend type Query {
+    Comment(id: ID @eq): Comment @find
+    Comments: [Comment!]! @paginate
+}
+
+enum Status {
+    publish @enum(value: "publish")
+    pending @enum(value: "pending")
+    trash @enum(value: "trash")
+}
+
+# Get single comment
+type Comment {
+    id: ID!
+    user_id: String
+    post_id: String
+    text: String
+    status: Status!
+    author: User! @belongsTo
+    post: Post! @belongsTo
+    created_at: String
+    updated_at: String
+    deleted_at: String
+}
+
+# Get all comment
+type Comments {
+    id: ID!
+    user_id: String
+    post_id: String
+    text: String
+    status: Status!
+    author: User! @belongsTo
+    post: Post! @belongsTo
+    created_at: String
+    updated_at: String
+    deleted_at: String
+}
+
+# Create new comment
+extend type Mutation {
+    createComment(
+        user_id: String! @rules(apply: ["exists:users,id"])
+        post_id: String! @rules(apply: ["exists:posts,id"])
+        text: String!
+        status: Status!
+    ): Comment! @create
+}

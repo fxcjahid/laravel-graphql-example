@@ -1,0 +1,45 @@
+# GraphQL Query
+extend type Query {
+    Category(id: ID @eq): Categories @find
+    Categories: [Categories!]! @paginate
+}
+
+# Get single category
+type Category {
+    id: ID!
+    name: String
+    user_id: String
+    author: User! @belongsTo
+    posts: [Posts]! @belongsToMany
+    description: String
+    is_active: String
+    slug: String
+    created_at: String
+    updated_at: String
+    deleted_at: String
+}
+
+# Get all Categories
+type Categories {
+    id: ID!
+    name: String
+    user_id: String
+    author: User! @belongsTo
+    posts: [Posts]! @belongsToMany
+    description: String
+    is_active: String
+    slug: String
+    created_at: String
+    updated_at: String
+    deleted_at: String
+}
+
+# Create new user
+extend type Mutation {
+    createCategory(
+        name: String!
+        description: String!
+        slug: String! @rules(apply: ["unique:categories"])
+        user_id: String! @rules(apply: ["exists:users,id"])
+    ): Categories! @create
+}

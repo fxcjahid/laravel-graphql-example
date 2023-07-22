@@ -1,0 +1,47 @@
+# GraphQL Query
+extend type Query {
+    Post(id: ID @eq): Post @find
+    Posts: [Post!]! @paginate
+}
+
+# Get single post
+type Post {
+    id: ID!
+    name: String
+    user_id: String
+    author: User! @belongsTo
+    description: String
+    summary: String
+    status: String
+    slug: String
+    created_at: String
+    updated_at: String
+    deleted_at: String
+}
+
+# Get all post
+type Posts {
+    id: ID!
+    name: String
+    user_id: String
+    author: User! @belongsTo
+    description: String
+    summary: String
+    status: String
+    slug: String
+    created_at: String
+    updated_at: String
+    deleted_at: String
+}
+
+# Create new post
+extend type Mutation {
+    createPost(
+        name: String!
+        description: String!
+        summary: String
+        status: String!
+        slug: String! @rules(apply: ["unique:posts"])
+        user_id: String! @rules(apply: ["exists:users,id"])
+    ): Post! @create
+}
