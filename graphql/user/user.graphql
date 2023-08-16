@@ -2,31 +2,61 @@
 scalar DateTime
     @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
+input InputQuery {
+	key: String!
+	value: String!
+}
+
 # GraphQL Query
 extend type Query {
-    User(id: ID @eq): User @find
-    Users: [User!]! @paginate
+    User(id: ID @eq): User @find @validator @guard
+    Users: [User!]! @paginate @guard
+	me: User @auth @guard
+	Profile(query: [InputQuery!]!): User @field(resolver: "App\\GraphQL\\Queries\\FindUserQuery@resolve") @validator @guard
+}  
+
+interface UserObject {
+	id: ID! 
+	first_name: String
+	last_name: String
+    name: String
+	username: String
+    email: String  
+    posts: [Posts]! @hasMany
+    created_at: DateTime
+    email_verified_at: DateTime
 }
 
 # Get single user
-type User {
-    id: ID!
+type User implements UserObject {
+	id: ID! 
+	first_name: String
+	last_name: String
     name: String
-    email: String
+	username: String
+	ProfilePicture: String
+	bio: String
+	ViewType: String
+	cover: String
+    email: String  
     posts: [Posts]! @hasMany
     created_at: DateTime
     email_verified_at: DateTime
 }
 
 # Get all user
-type Users {
-    id: ID!
+type Users implements UserObject {
+	id: ID! 
+	first_name: String
+	last_name: String
     name: String
-    email: String
+	username: String
+    email: String  
     posts: [Posts]! @hasMany
     created_at: DateTime
     email_verified_at: DateTime
 }
+ 
 
 # Create new user
 extend type Mutation {
