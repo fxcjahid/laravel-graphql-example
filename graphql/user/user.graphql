@@ -1,6 +1,7 @@
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
 scalar DateTime
     @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+ 
 
 input InputQuery {
 	key: String!
@@ -65,4 +66,11 @@ extend type Mutation {
         email: String! @rules(apply: ["email", "unique:users"])
         password: String! @rules(apply: ["min:8"])
     ): User! @create
+
+    updateProfile (  
+		first_name: String
+		last_name: String 
+		username: String   
+		# email: String
+    ): User! @guard @validator @field(resolver: "App\\GraphQL\\Mutations\\UpdateProfileMutation@updateProfile")
 }
