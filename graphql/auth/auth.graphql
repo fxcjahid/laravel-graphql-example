@@ -1,3 +1,20 @@
+type loginInput{
+	status: Int!
+	message: String
+	token: String
+}
+
+type LogoutInput {
+	status: Int!
+	id: Int!
+	message: String
+}
+
+
 extend type Mutation {
-    login(email: String!, password: String!, device: String!): String!
+    login(email: String!, password: String!, device: String!): loginInput @validator
+}
+
+extend type Mutation {
+	logout: LogoutInput @guard 
 }

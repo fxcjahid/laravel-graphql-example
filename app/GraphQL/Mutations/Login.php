@@ -3,8 +3,7 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 
 final class Login
 {
@@ -12,18 +11,40 @@ final class Login
      * @param  null  $_
      * @param  array{}  $args
      */
-    public function __invoke($_, array $request)
+    public function __invoke($_, $request)
     {
+        /**
+         * Filter only accept email & password
+         */
+        $credentials = array(
+            'email'    => $request['email'],
+            'password' => $request['password'],
+        );
 
-        $user = User::where('email', $request['email'])->first();
+        /**
+         * IF request data is valid to next proccess
+         */
+        if (Auth::attempt($credentials)) {
 
-        if (!$user || !Hash::check($request['password'], $user->password)) {
-            throw ValidationException::withMessages([
-                'wrong' => ['The provided credentials are incorrect.'],
-            ]);
+            /**
+             * Check exiting email to next
+             */
+            $user = User::where('email', $request['email'])->first();
+
+            $token = $user->createToken('userLoginToken')->plainTextToken;
+
+            return [
+                'status'  => 200,
+                'message' => 'Your authentication was successful.',
+                'token'   => $token,
+            ];
         }
 
-        return $user->createToken($request['device'])->plainTextToken;
-
+        return [
+            'status'  => 401,
+            'message' => 'Please, type valid email and password.',
+            'token'   => '',
+        ];
     }
+
 }

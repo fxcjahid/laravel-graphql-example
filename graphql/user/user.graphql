@@ -1,32 +1,63 @@
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
 scalar DateTime
     @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+ 
+
+input InputQuery {
+	key: String!
+	value: String!
+}
 
 # GraphQL Query
 extend type Query {
-    User(id: ID @eq): User @find
-    Users: [User!]! @paginate
+    User(id: ID @eq): User @find @validator @guard
+    Users: [User!]! @paginate @guard
+	me: User @auth @guard
+	Profile(query: [InputQuery!]!): User @field(resolver: "App\\GraphQL\\Queries\\FindUserQuery@resolve") @validator @guard
+}  
+
+interface UserObject {
+	id: ID! 
+	first_name: String
+	last_name: String
+    name: String
+	username: String
+    email: String  
+    posts: [Posts]! @hasMany
+    created_at: DateTime
+    email_verified_at: DateTime
 }
 
 # Get single user
-type User {
-    id: ID!
+type User implements UserObject {
+	id: ID! 
+	first_name: String
+	last_name: String
     name: String
-    email: String
+	username: String
+	ProfilePicture: String
+	bio: String
+	ViewType: String
+	cover: String
+    email: String  
     posts: [Posts]! @hasMany
     created_at: DateTime
     email_verified_at: DateTime
 }
 
 # Get all user
-type Users {
-    id: ID!
+type Users implements UserObject {
+	id: ID! 
+	first_name: String
+	last_name: String
     name: String
-    email: String
+	username: String
+    email: String  
     posts: [Posts]! @hasMany
     created_at: DateTime
     email_verified_at: DateTime
 }
+ 
 
 # Create new user
 extend type Mutation {
@@ -35,4 +66,11 @@ extend type Mutation {
         email: String! @rules(apply: ["email", "unique:users"])
         password: String! @rules(apply: ["min:8"])
     ): User! @create
+
+    updateProfile (  
+		first_name: String
+		last_name: String 
+		username: String   
+		# email: String
+    ): User! @guard @validator @field(resolver: "App\\GraphQL\\Mutations\\UpdateProfileMutation@updateProfile")
 }

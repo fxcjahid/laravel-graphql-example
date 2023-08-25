@@ -18,7 +18,9 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
+        'username',
         'email',
         'password',
     ];
@@ -50,4 +52,70 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+    public function getNameAttribute()
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function getProfilePictureAttribute()
+    {
+        return "https://www.austinchronicle.com/Images/Sponsored/1haleybrooks.jpg";
+    }
+
+    public function getBioAttribute()
+    {
+        return "Message me \"I'M NEW\" for some FREE fire content💦";
+    }
+
+    public function getViewTypeAttribute()
+    {
+        return "model";
+    }
+
+    public function getCoverAttribute()
+    {
+        return json_encode([
+            "cover" => [
+                "photo" => "...",
+            ],
+        ]);
+    }
+
+    public function getActivestatusAttribute()
+    {
+        return json_encode([
+            "activestatus" => [
+                "text"      => "Active now",
+                "now"       => true,
+                "timestamp" => 1660053206,
+            ],
+        ]);
+    }
+
+    public function getToolsAttribute()
+    {
+        return json_encode([
+            "tools" => [
+                "chat"      => true,
+                "tips"      => true,
+                "offer"     => 1,
+                "subscribe" => false,
+            ],
+        ]);
+    }
+
+    public function getStaticsAttribute()
+    {
+        return json_encode([
+            "statics" => [
+                "post"  => "23k",
+                "photo" => "422",
+                "video" => "134",
+                "fans"  => "42K",
+                "likes" => 0,
+            ],
+        ]);
+    }
+
 }
